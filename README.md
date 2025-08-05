@@ -1,80 +1,75 @@
 In this repository you will find the example scripts used in the article titled **CerMapp: Geospatial Cloud-Based Surveillance of Wildlife Diseases. A Prototype for National-Scale Monitoring under Geomatics and One Health Principles**
 
-# LST Anomalies 2022 (Google Earth Engine)
-
-**Author:** Tommaso Orusa  
-**Contact:** t.orusa@izs.it, tommaso.orusa@gmail.com  
-**Date:** 08/07/2025 (dd-mm-yyyy)
-
 ## Overview
 
-This script computes and visualizes Land Surface Temperature (LST) anomalies for the period July–August 2022 compared to the 1984–2022 historical mean, using Landsat satellite imagery processed in Google Earth Engine (GEE). It allows the export of results, statistical analyses, and the integration of LST anomalies with point datasets (e.g., disease occurrences) for clustering and zonal statistics.
+This repository contains scripts for the computation, visualization, and statistical analysis of Land Surface Temperature (LST) anomalies, focusing on July–August 2022 relative to the 1984–2022 mean. The workflow is implemented in both Google Earth Engine (JavaScript) and R, enabling flexible geospatial analysis and integration with epidemiological or ecological point data.
 
-## Main Features
+## Contents
 
-- **Automatic AOI Selection:** Flexible definition of Area of Interest (AOI) via geometry or imported asset.
-- **Multi-Sensor LST Calculation:** Utilizes Landsat 5, 7, 8, and 9 with harmonized LST computation ([S. Ermida's module](https://code.earthengine.google.com/?scriptPath=users/sofiaermida/landsat_smw_lst:modules/Landsat_LST)).
-- **Temporal Subsetting:**  
-  - *Historical mean*: July-August, 1984–2022  
-  - *Target year*: July-August, 2022
-- **Cloud Masking:** Uses the QA_PIXEL band for rigorous cloud removal.
-- **Anomaly Calculation:**  
-  - *Absolute anomaly:* Mean 2022 LST minus historical mean (°C)  
-  - *Percent anomaly:* Relative to historical mean (%)
-- **Visualization:**  
-  - LST maps with color palettes  
-  - Absolute/percentage anomaly maps  
-  - Interactive color legends
-- **Statistics & Sampling:**  
-  - Random sampling (500 points) for histograms/statistics  
-  - Mean and stddev for anomalies  
-  - Observation density maps
-- **Exporting:**  
-  - GeoTIFFs of results  
-  - Sampled points (CSV)  
-  - Observation density
-- **Integration:**  
-  - Attach anomaly values to external point datasets (e.g., epidemiological data)  
-  - Zonal statistics  
-  - K-means clustering and cluster statistics  
-  - Visualization of clusters
+- **Google Earth Engine (`lst_anomalies.js`)**  
+  Script for large-scale LST anomaly processing in Google Earth Engine.
+- **R Script**  
+  Utilities for advanced data processing and statistical analysis on the results exported from GEE.
+
+## Features
+
+### Google Earth Engine (`lst_anomalies.js`)
+
+- **AOI Handling:** Uses geometry or asset for flexible area definition.
+- **LST Calculation:** Fetches and harmonizes Landsat 5, 7, 8, 9 from 1984–2022.
+- **Temporal Subsetting:** Historical (1984–2022) and target year (2022) for July–August.
+- **Cloud Masking:** Advanced removal using QA_PIXEL band.
+- **Anomalies:** Computes both absolute (°C) and percentage differences.
+- **Visualization:** Interactive layers for mean values (historical and 2022), anomalies, and observation density.
+- **Sampling & Stats:** Random sampling, descriptive stats, histograms, and observation density.
+- **Exports:** GeoTIFFs (anomalies, means, density) and sampled data (CSV).
+- **Integration with Point Data:** Anomaly extraction, zonal stats, clustering, cluster statistics, and exports for epidemiological studies.
+
+### R Script
+
+The R script is designed for advanced post-processing and analysis of LST anomaly data exported from GEE. It typically performs the following:
+
+- **Import of Exported GeoTIFF/CSV Data:** Load LST anomaly rasters and sampled points.
+- **Spatial Analysis:** Overlay and extract anomalies at point locations of interest (e.g., disease sites).
+- **Descriptive & Inferential Statistics:** Compute summary statistics, test spatial patterns, and perform custom visualizations.
+- **Advanced Visualizations:** Plot distributions, time series, or spatial maps of anomalies.
+- **Clustering & Pattern Detection:** Apply statistical or machine learning methods to point-level anomaly measurements.
+
+The R script is intended for users wanting customizable local analysis beyond the GEE platform. It is fully compatible with data exported by `lst_anomalies.js`.
 
 ## Usage Instructions
 
-1. **Set Area of Interest:**  
-   Update the `geometry` or AOI asset as needed.
-2. **Load Required Modules:**  
-   The script requires external GEE modules:
-   - `users/sofiaermida/landsat_smw_lst:modules/Landsat_LST.js`
-   - `users/jhowarth/eePrimer:modules/image_tools.js`
-   - `users/gena/packages:palettes`
-   - `users/jhowarth/eePrimer:modules/cart.js`
-3. **Run All Cells:**  
-   Use the GEE Code Editor. Visualization layers and statistics will be printed to the console and map.
-4. **Export Results:**  
-   Configure export tasks in the GEE “Tasks” tab and start them manually.
+1. **In Google Earth Engine:**
+   - Edit AOI as needed.
+   - Run `lst_anomalies.js` to process LST data, visualize results, and configure exports (GeoTIFF, CSV).
+   - Start export tasks in the GEE Tasks tab.
+2. **In R:**
+   - Download exported data from GEE.
+   - Use the R script to:
+     - Read and visualize rasters and sample tables.
+     - Integrate anomaly data with epidemiological/point datasets.
+     - Carry out further statistical analyses and customized plots.
 
 ## Requirements
 
-- **Google Earth Engine account**
+- **Google Earth Engine account**  
 - **AOI asset**: `"projects/izsgis-am/assets/VDA_INVA_OK_ED50"`
-- **(Optional)**: FeatureCollection (e.g., `anaplasma`) for clustering/statistics
-
-## Notes
-
-- AOI and sample sizes can be adjusted in the script for performance.
-- All LST values are converted from Kelvin to Celsius before analysis.
-- The cluster and statistical analyses for external point datasets are optional and require the user to supply a suitable FeatureCollection named `anaplasma` with relevant properties.
+- **R with typical spatial/statistics packages** (e.g. raster, sf, tidyverse)
+- (Optional) Point datasets for epidemiology or ecology
 
 ## Outputs
 
-- **GeoTIFFs:** Absolute/percent anomalies, mean LSTs, observation density
-- **CSV:** Sampled anomalies, clustered point attributes
-- **Map Layers:** Interactive, with color-coded legends
-- **Console:** Summary statistics, histograms, image counts
+- **GeoTIFFs**: Anomaly rasters, mean LST rasters, observation density
+- **CSVs**: Sampled anomaly values, clustered points
+- **R Graphics**: Custom maps, plots, statistics
+- **Map Layers**: Interactive visualization in GEE
 
-### Citation
+## Notes
 
-Please reference the included module authors if using LST computation or palettes in published work. For script-related queries or collaboration, contact Tommaso Orusa.
+- Remember to update asset IDs and parameters as needed.
+- The R script supplements the GEE workflow for post hoc, reproducible, and publication-ready analyses.
 
-**Enjoy anomaly mapping with GEE!**
+## Citation
+
+If you use these scripts or modules, please cite the relevant script authors and module creators. For issues, suggestions, or collaboration, please contact Tommaso Orusa.
+
